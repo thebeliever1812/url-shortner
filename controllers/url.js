@@ -4,16 +4,18 @@ const { nanoid } = require("nanoid");
 async function handleGenerateNewShortUrl(req, res) {
 	try {
 		const body = req.body;
-		if (!body.url) {
-			res.status(400).json({ error: "Url is required" });
+		if (!body.redirectUrl) {
+			return res.status(400).json({ error: "Url is required" });
 		}
 		const shortId = nanoid(8);
 		await Url.create({
 			shortId: shortId,
-			redirectUrl: body.url,
+			redirectUrl: body.redirectUrl,
 			timeStamp: [],
 		});
-		res.status(200).json({ shortUrl: `http://localhost:8000/url/${shortId}` });
+		res.status(200).render("home", {
+			shortUrl: `http://localhost:8000/url/${shortId}`,
+		});
 	} catch (error) {
 		console.log(`Error creating short id: ${error}`);
 		res.status(500).json({ error: error });
@@ -27,14 +29,14 @@ async function handleRedirectToUrl(req, res) {
 			{ shortId },
 			{
 				$push: {
-					visitHIistory: {
+					visitHistory: {
 						timeStamp: Date.now(),
 					},
 				},
 			}
 		);
 		if (!entry) {
-			res.status(400).json({ error: "Not found" });
+			return res.status(400).json({ error: "Not found" });
 		}
 		res.status(200).redirect(entry.redirectUrl);
 	} catch (error) {
@@ -60,8 +62,24 @@ async function handleGetAnalytics(req, res) {
 	}
 }
 
+async function handleGetAllUrls(req, res) {
+	try {
+		const allUrls = await Url.find({});
+		if (!allUrls) {
+			res.status(400).json({ error: "Bad request" });
+		}
+		res.render("home", {
+			urls: allUrls,
+		});
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({ error: error });
+	}
+}
+
 module.exports = {
 	handleGenerateNewShortUrl,
 	handleRedirectToUrl,
 	handleGetAnalytics,
+	handleGetAllUrls,
 };

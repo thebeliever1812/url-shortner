@@ -4,12 +4,15 @@ const {
 	handleGenerateNewShortUrl,
 	handleRedirectToUrl,
 	handleGetAnalytics,
+	handleGetAllUrls,
 } = require("../controllers/url");
 
 router.post("/", handleGenerateNewShortUrl);
 
-router.get("/:shortId", handleRedirectToUrl);
+router.get("/allurls", handleGetAllUrls);
 
 router.get("/analytics/:shortId", handleGetAnalytics);
+
+router.get("/:shortId", handleRedirectToUrl);
 
 module.exports = router;
