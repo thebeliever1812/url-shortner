@@ -13,11 +13,55 @@ async function handleGenerateNewShortUrl(req, res) {
 			redirectUrl: body.url,
 			timeStamp: [],
 		});
-		res.status(200).json({ id: shortId });
+		res.status(200).json({ shortUrl: `http://localhost:8000/url/${shortId}` });
 	} catch (error) {
 		console.log(`Error creating short id: ${error}`);
 		res.status(500).json({ error: error });
 	}
 }
 
-module.exports = { handleGenerateNewShortUrl };
+async function handleRedirectToUrl(req, res) {
+	try {
+		const shortId = req.params.shortId;
+		const entry = await Url.findOneAndUpdate(
+			{ shortId },
+			{
+				$push: {
+					visitHIistory: {
+						timeStamp: Date.now(),
+					},
+				},
+			}
+		);
+		if (!entry) {
+			res.status(400).json({ error: "Not found" });
+		}
+		res.status(200).redirect(entry.redirectUrl);
+	} catch (error) {
+		console.log(`Error getting entry : ${error}`);
+		res.status(500).json("Server error");
+	}
+}
+
+async function handleGetAnalytics(req, res) {
+	try {
+		const shortId = req.params.shortId;
+		const result = await Url.findOne({ shortId });
+		if (!result) {
+			res.status(400).json({ error: "Not found" });
+		}
+		res.status(200).json({
+			totalClicks: result.visitHIistory.length,
+			analytics: result.visitHIistory,
+		});
+	} catch (error) {
+		console.log(`Error getting analytics: ${error}`);
+		res.status(500).json({ error: error });
+	}
+}
+
+module.exports = {
+	handleGenerateNewShortUrl,
+	handleRedirectToUrl,
+	handleGetAnalytics,
+};

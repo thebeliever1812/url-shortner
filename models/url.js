@@ -5,11 +5,12 @@ const urlSchema = new mongoose.Schema(
 		shortId: {
 			type: String,
 			required: true,
-			unnique: true,
+			unique: true,
 		},
 		redirectUrl: {
 			type: String,
 			required: true,
+			unique: true,
 		},
 		visitHIistory: [{ timeStamp: { type: Number } }],
 	},
