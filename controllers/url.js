@@ -12,6 +12,7 @@ async function handleGenerateNewShortUrl(req, res) {
 			shortId: shortId,
 			redirectUrl: body.redirectUrl,
 			timeStamp: [],
+			createdBy: req.user._id
 		});
 		res.status(200).render("home", {
 			shortUrl: `http://localhost:8000/url/${shortId}`,
