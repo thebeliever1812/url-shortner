@@ -15,4 +15,5 @@ router.get("/analytics/:shortId", handleGetAnalytics);
 
 router.get("/:shortId", handleRedirectToUrl);
 
+
 module.exports = router;

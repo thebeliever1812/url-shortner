@@ -54,8 +54,8 @@ async function handleGetAnalytics(req, res) {
 			res.status(400).json({ error: "Not found" });
 		}
 		res.status(200).json({
-			totalClicks: result.visitHIistory.length,
-			analytics: result.visitHIistory,
+			totalClicks: result?.visitHistory?.length,
+			analytics: result?.visitHistory,
 		});
 	} catch (error) {
 		console.log(`Error getting analytics: ${error}`);
