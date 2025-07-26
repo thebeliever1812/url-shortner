@@ -39,7 +39,9 @@ async function handleUserLogin(req, res) {
 
 		// In case of Stateless Auth
 		const token = setUser(user);
-		res.cookie("uid", token);
+		res.cookie("token", token, {
+			maxAge: 24 * 60 * 60 * 1000
+		});
 
 		return res.status(200).redirect("/");
 	} catch (error) {
