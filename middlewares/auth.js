@@ -14,8 +14,13 @@ async function restrictToLoggedinUserOnly(req, res, next) {
 }
 
 async function checkAuth(req, res, next) {
-	const userUid = req.cookies.uid;
-	const user = getUser(userUid);
+	// For Stateful Auth
+	// const userUid = req.cookies.uid;
+	// const user = getUser(userUid);
+
+	// For Stateless Auth
+	const userToken = req.cookies.uid;
+	const user = getUser(userToken);
 	req.user = user;
 	next();
 }

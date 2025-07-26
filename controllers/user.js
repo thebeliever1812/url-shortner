@@ -1,5 +1,5 @@
 const User = require("../models/user");
-const { v4: uuidv4 } = require("uuid");
+// const { v4: uuidv4 } = require("uuid");
 const { setUser } = require("../service/auth");
 
 async function handleUserSignup(req, res) {
@@ -13,7 +13,7 @@ async function handleUserSignup(req, res) {
 		await User.create({
 			name,
 			email,
-            password,
+			password,
 		});
 		res.status(200).redirect("/login");
 	} catch (error) {
@@ -31,9 +31,16 @@ async function handleUserLogin(req, res) {
 				error: "User not found: Invalid email or password",
 			});
 		}
-		const sessionId = uuidv4();
-		setUser(sessionId, user);
-		res.cookie("uid", sessionId);
+
+		// In case of Stateful Auth
+		// const sessionId = uuidv4();
+		// setUser(sessionId, user);
+		// res.cookie("uid", sessionId);
+
+		// In case of Stateless Auth
+		const token = setUser(user);
+		res.cookie("uid", token);
+
 		return res.status(200).redirect("/");
 	} catch (error) {
 		console.log("Login error: ", error);
